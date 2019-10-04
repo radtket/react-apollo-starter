@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import PropTypes from "prop-types";
+import { useToasts } from "react-toast-notifications";
+import { Home } from "./components";
+import { Authenticate, useStore } from "./components/general";
+import history from "./history";
 
-function App() {
+import "./index.css";
+
+const App = ({ match, location }) => {
+  const { state } = location;
+  const store = useStore();
+  const { addToast } = useToasts();
+  React.useEffect(() => {
+    if (state && state.welcome) {
+      addToast("Welcome!", { appearance: "success", autoDismiss: true });
+      history.replace("/"); // that's an hack to remove route's state
+    }
+  }, [addToast, state]);
+  console.log(store);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main">
+      <Authenticate>
+        <Home match={match} />
+      </Authenticate>
+      <style jsx>{`
+        *,
+        *::after,
+        *::before {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        .main {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+        }
+        p {
+          color: #444;
+        }
+        h1 {
+          color: navy;
+        }
+      `}</style>
     </div>
   );
-}
+};
+App.propTypes = {
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+};
 
 export default App;
